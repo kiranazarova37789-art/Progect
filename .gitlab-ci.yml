@@ -1,0 +1,29 @@
+variables:
+  AZURE_CLIENT_ID: 6715970e-5341-4766-bf80-73848aaaea1b
+  AZURE_CLIENT_SECRET: g6j8Q~FKXgghW~hjZgsymVIo64kSzpHP-s1T7azj
+  AZURE_TENANT_ID: d7647382-2e57-436b-b370-5dd0a8c7bbbe
+  AZURE_WEBAPP_NAME: cartridgesmonitoring
+build:
+  stage: build
+  image: mcr.microsoft.com/dotnet/sdk:8.0
+  script:
+    - apt-get update
+    - apt-get install zip unzip
+    - mkdir dist
+    - dotnet publish --self-contained true CartridgesMonitoring.csproj -c Release -r win-x86
+    - cd /builds/rz6890825/kira.net/bin/Release/net8.0/
+    - ls
+    - cd /builds/rz6890825/kira.net/bin/Release/net8.0/win-x86/publish/
+    - zip -r /builds/rz6890825/kira.net/dist/CartridgesMonitoring.zip * .azurefunctions
+  artifacts:
+    paths:
+      - dist/CartridgesMonitoring.zip
+deploy:
+  stage: deploy
+  image: mcr.microsoft.com/azure-cli
+  script:
+    - az login --service-principal --username 6715970e-5341-4766-bf80-73848aaaea1b --password g6j8Q~FKXgghW~hjZgsymVIo64kSzpHP-s1T7azj --tenant d7647382-2e57-436b-b370-5dd0a8c7bbbe
+    - az webapp config appsettings set --resource-group CartridgesMonitoring --name cartridgesmonitoring --settings WEBSITE_NODE_DEFAULT_VERSION=18.17.1
+    - az webapp deployment source config-zip -g CartridgesMonitoring -n cartridgesmonitoring --src dist/CartridgesMonitoring.zip
+  dependencies:
+    - build

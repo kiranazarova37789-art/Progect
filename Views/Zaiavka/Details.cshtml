@@ -1,0 +1,44 @@
+﻿@model Zaiavka
+
+@{
+    ViewData["Title"] = "Детали заявки";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+
+@if (Model == null)
+{
+    <p>Заявка не найдена.</p>
+}
+else
+{
+    <table class="table table-bordered">
+        <tr>
+            <th>ID</th>
+            <td>@Model.id_zv</td>
+        </tr>
+        <tr>
+            <th>Статус</th>
+            <td>@Model.status_zv</td>
+        </tr>
+        <tr>
+            <th>Модель картриджа</th>
+            <td>@Model.cartridg_model</td>
+        </tr>
+        <tr>
+            <th>Номер кабинета</th>
+            <td>@Model.num_off</td>
+        </tr>
+        <tr>
+            <th>Корпус</th>
+            <td>@Model.parent_off</td>
+        </tr>
+        <tr>
+            <th>IP принтера</th>
+            <td>@Model.ip_printer</td>
+        </tr>
+    </table>
+
+    <a href="@Url.Action("Index")" class="btn btn-primary">Назад к списку</a>
+}
